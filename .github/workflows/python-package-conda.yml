@@ -41,3 +41,9 @@ jobs:
           ls -lh output.mp4
           ffprobe -v error -show_entries format=duration,size \
             -of default=noprint_wrappers=1 output.mp4
+
+      - name: Upload video
+        uses: actions/upload-artifact@v4
+        with:
+          name: kahani-duniya-video
+          path: output.mp4
