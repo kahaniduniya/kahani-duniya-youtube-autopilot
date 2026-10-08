@@ -1,16 +1,31 @@
 import subprocess
 from pathlib import Path
+from gtts import gTTS
 
 
 def create_video(title, output="output.mp4"):
     output_path = Path(output)
+    audio_path = Path("voice.mp3")
 
-    # Simple vertical 9:16 test video
+    # Hindi test narration
+    narration = (
+        "नमस्ते दोस्तों। "
+        "आज की कहानी बहुत मजेदार है। "
+        "एक दिन गणेश जी के साथ एक मजेदार घटना हुई। "
+        "आइए सुनते हैं यह छोटी सी मजेदार कहानी।"
+    )
+
+    # Create Hindi voice
+    tts = gTTS(text=narration, lang="hi")
+    tts.save(str(audio_path))
+
+    # Create video + add voice
     command = [
         "ffmpeg",
         "-y",
         "-f", "lavfi",
         "-i", "color=c=black:s=1080x1920:d=10",
+        "-i", str(audio_path),
         "-vf",
         (
             "drawtext="
@@ -23,8 +38,9 @@ def create_video(title, output="output.mp4"):
         ),
         "-c:v", "libx264",
         "-pix_fmt", "yuv420p",
-        "-t", "10",
-        str(output_path),
+        "-c:a", "aac",
+        "-shortest",
+        str(output_path)
     ]
 
     subprocess.run(command, check=True)
