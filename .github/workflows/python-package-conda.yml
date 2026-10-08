@@ -19,10 +19,25 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
       - name: Check Python files
         run: |
           python -m py_compile main.py
           python -m py_compile content_tools.py
+          python -m py_compile video_generator.py
 
       - name: Run main.py
         run: python main.py
+
+      - name: Create test video
+        run: python video_generator.py
+
+      - name: Check video
+        run: |
+          ls -lh output.mp4
+          ffprobe -v error -show_entries format=duration,size \
+            -of default=noprint_wrappers=1 output.mp4
